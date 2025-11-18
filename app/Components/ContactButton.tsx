@@ -5,6 +5,4 @@ const ContactButton = () => {
         </button>
     )
 }
-
-
 export default ContactButton;

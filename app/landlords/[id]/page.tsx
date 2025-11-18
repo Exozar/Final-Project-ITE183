@@ -1,10 +1,6 @@
 import Image from "next/image";
 import PropertyLists from "@/app/Components/properties/PropertyLists";
 import ContactBtn from "@/app/Components/ContactButton";
-
-
-
-
 const LandlordDetailPage = () => {
     return (
         <main className="max-w-[1500px] mx-auto px-6">
@@ -22,8 +18,6 @@ const LandlordDetailPage = () => {
                         <ContactBtn />
                     </div>
                          </aside>
-
-
                 <div className="col-span-1 md:col-span-3 pl-0 md:pl-6">
                     <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
                         <PropertyLists />
@@ -33,5 +27,4 @@ const LandlordDetailPage = () => {
         </main>
     )
 }
-
 export default LandlordDetailPage;
