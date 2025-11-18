@@ -27,6 +27,8 @@ const PropertyDetailPage = () => {
                             className="rounded-full"
                             alt="The user name"
                         />
+                        <p><strong>Bryan Salazar</strong> is your host</p>
+
                     </div>
                     <hr />
                     <p className="mt-6 text-lg">
