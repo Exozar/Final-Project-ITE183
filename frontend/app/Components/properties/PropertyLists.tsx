@@ -1,6 +1,8 @@
 'use client';
+
+
 import { useEffect, useState } from 'react';
-import PropertyListItem from "./PropertyListItems";
+import PropertyListItems from "./PropertyListItems";
 import apiService from '@/app/services/apiService';
 
 
@@ -9,6 +11,7 @@ export type PropertyType = {
     title: string;
     image_url: string;
     price_per_night: number;
+    is_favorite: boolean;
 }
 
 
@@ -19,10 +22,34 @@ interface PropertyListProps {
 
 
 const PropertyLists: React.FC<PropertyListProps> = ({
-    landlord_id
-    // favorites
+    landlord_id,
+    favorites
 }) => {
     const [properties, setProperties] = useState<PropertyType[]>([]);
+
+
+    const markFavorite = (id: string, is_favorite: boolean) => {
+        const tmpProperties = properties.map((property: PropertyType) => {
+            if (property.id == id) {
+                property.is_favorite = is_favorite
+
+
+                if (is_favorite) {
+                    console.log('added to list of favorited propreties')
+                } else {
+                    console.log('removed from list')
+                }
+            }
+
+
+            return property;
+        })
+
+
+        setProperties(tmpProperties);
+    }
+
+
 
 
     let url = '/api/properties/';
@@ -34,10 +61,19 @@ const PropertyLists: React.FC<PropertyListProps> = ({
 
 
     const getProperties = async () => {
-        const tmpProperties = await apiService.get(url)
+        const tmpProperties = await apiService.get(url);
 
 
-        setProperties(tmpProperties.data)
+        setProperties(tmpProperties.data.map((property: PropertyType) => {
+            if (tmpProperties.favorites.includes(property.id)) {
+                property.is_favorite = true
+            } else {
+                property.is_favorite = false
+            }
+
+
+            return property
+        }));
     };
 
 
@@ -50,10 +86,10 @@ const PropertyLists: React.FC<PropertyListProps> = ({
         <>
             {properties.map((property) => {
                 return (
-                    <PropertyListItem
+                    <PropertyListItems
                         key={property.id}
                         property={property}
-                    // markFavorite={(is_favorite: any) => markFavorite(property.id, is_favorite)}
+                        markFavorite={(is_favorite: any) => markFavorite(property.id, is_favorite)}
                     />
                 )
             })}
