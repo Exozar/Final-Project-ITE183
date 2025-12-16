@@ -20,7 +20,6 @@ const SignUpModal = () => {
     const [password2, setPassword2] = useState('');
     const [errors, setErrors] = useState<string[]>([]);
 
-
     //
     // Submit functionality
     const submitSignup = async () => {
@@ -30,17 +29,11 @@ const SignUpModal = () => {
             password2: password2
         }
 
-        const response = await apiService.post('/api/auth/register/', JSON.stringify(formData));
-
-
-
+        const response = await apiService.postWithoutToken('/api/auth/register/', JSON.stringify(formData));
 
         if (response.access) {
             handleLogin(response.user.pk, response.access, response.refresh);
             signupModal.close();
-
-
-
 
             router.push('/')
         } else {
@@ -48,15 +41,9 @@ const SignUpModal = () => {
                 return error;
             })
 
-
-
-
             setErrors(tmpErrors);
         }
     }
-
-
-
 
     const content = (
         <>
@@ -88,7 +75,6 @@ const SignUpModal = () => {
             </form>
         </>
     )
-
     return (
         <>
             <Modal
