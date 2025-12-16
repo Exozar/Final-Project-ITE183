@@ -16,12 +16,6 @@ interface UserNavProps {
 }
 
 
-
-
-
-
-
-
 const UserNav: React.FC<UserNavProps> = ({
     userId
 }) => {
@@ -51,13 +45,20 @@ const UserNav: React.FC<UserNavProps> = ({
                 <div className="w-[220px] absolute top-[60px] right-0 bg-white border border-gray-300 rounded-xl shadow-md flex flex-col cursor-pointer overflow-hidden">
                     {userId ? (
                         <>
-
-
                             <MenuLink
                                 label='My properties'
                                 onClick={() => {
                                     setIsOpen(false);
                                     router.push('/myproperties');
+                                }}
+                            />
+
+
+                            <MenuLink
+                                label='My favorites'
+                                onClick={() => {
+                                    setIsOpen(false);
+                                    router.push('/myfavorites');
                                 }}
                             />
 
