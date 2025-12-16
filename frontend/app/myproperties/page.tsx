@@ -1,13 +1,24 @@
-import Image from "next/image";
-import PropertyLists from "@/app/Components/properties/PropertyLists";
-const MyPropertiesPage = () => {
+import { getUserId } from "../lib/action";
+import PropertyLists from "../Components/properties/PropertyLists";
+
+
+const MyPropertiesPage = async () => {
+    const userId = await getUserId();
+
+
     return (
         <main className="max-w-[1500px] mx-auto px-6 pb-6">
             <h1 className="my-6 text-2xl">My properties</h1>
+
+
             <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-                <PropertyLists />
+                <PropertyLists
+                    landlord_id={userId}
+                />
             </div>
         </main>
     )
 }
+
+
 export default MyPropertiesPage;
