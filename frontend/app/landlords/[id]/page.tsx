@@ -1,7 +1,16 @@
 import Image from "next/image";
 import PropertyLists from "@/app/Components/properties/PropertyLists";
 import ContactBtn from "@/app/Components/ContactButton";
-const LandlordDetailPage = () => {
+import apiService from "@/app/services/apiService";
+import { getUserId } from "@/app/lib/action";
+import ContactButton from "@/app/Components/ContactButton";
+
+
+const LandlordDetailPage = async (props: { params: { id: string } }) => {
+    const params = await props.params;
+    const landlord = await apiService.get(`/api/auth/landlord/${params.id}/`);
+    const userId = await getUserId();
+
     return (
         <main className="max-w-[1500px] mx-auto px-6">
             <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
@@ -11,16 +20,25 @@ const LandlordDetailPage = () => {
                             src="/profile_pic_1.jpg"
                             width={200}
                             height={200}
-                            alt="Landlrod name"
+                            alt="Landlord name"
                             className="rounded-full"
                         />
-                        <h1 className="mt-6 text-2xl">Bryan Salazar</h1>
-                        <ContactBtn />
+                        <h1 className="mt-6 text-2xl">{landlord.name}</h1>
+                        {userId != params.id && (
+                            <ContactButton
+                            // userId={userId}
+                            // landlordId={params.id}
+                            />
+                        )}
                     </div>
-                         </aside>
+                </aside>
+
+
                 <div className="col-span-1 md:col-span-3 pl-0 md:pl-6">
                     <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-                        <PropertyLists />
+                        <PropertyLists
+                            landlord_id={params.id}
+                        />
                     </div>
                 </div>
             </div>
