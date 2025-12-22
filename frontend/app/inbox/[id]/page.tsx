@@ -1,7 +1,9 @@
-import { getAccessToken, getUserId } from "../../lib/action";
+import { getUserId } from "../../lib/action";
+import React from 'react';
 import apiService from "@/app/services/apiService";
 import ConversationDetail from "@/app/Components/inbox/ConversationDetail";
 import { UserType } from "../page";
+import { getAccessToken } from "../../lib/action";
 
 
 export type MessageType = {
@@ -15,14 +17,6 @@ export type MessageType = {
 
 
 const ConversationPage = async ({ params }: { params: { id: string } }) => {
-    if (!params?.id) {
-        return (
-            <main className="max-w-[1500px] mx-auto px-6 py-12">
-                <p>Invalid conversation ID.</p>
-            </main>
-        )
-    }
-
     const userId = await getUserId();
     const token = await getAccessToken();
 
@@ -36,7 +30,8 @@ const ConversationPage = async ({ params }: { params: { id: string } }) => {
     }
 
 
-    const conversation = await apiService.get(`/api/chat/${params.id}/`)
+    const { id } = await params;
+    const conversation = await apiService.get(`/api/chat/${id}/`)
 
 
     return (
@@ -44,7 +39,7 @@ const ConversationPage = async ({ params }: { params: { id: string } }) => {
             <ConversationDetail
                 token={token}
                 userId={userId}
-                // messages={conversation.messages}
+                messages={conversation.messages}
                 conversation={conversation.conversation}
             />
         </main>
