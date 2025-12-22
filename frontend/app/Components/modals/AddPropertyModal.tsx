@@ -1,14 +1,23 @@
 'use client';
+
+
 import Image from 'next/image';
+
+
+
+
 import { ChangeEvent, useState } from 'react';
 import Modal from './Modal';
 import CustomButton from '../forms/CustomButton';
 import Categories from '../addproperty/Categories';
+
+
 import useAddPropertyModal from '@/app/hooks/AddPropertyModal';
 import SelectCountry, { SelectCountryValue } from '../forms/SelectCountry';
+
+
 import apiService from '@/app/services/apiService';
 import { useRouter } from 'next/navigation';
-import { getAccessToken } from '@/app/lib/action'; // Adjust the import path as needed
 
 
 const AddPropertyModal = () => {
@@ -37,7 +46,6 @@ const AddPropertyModal = () => {
     const router = useRouter();
 
 
-    //
     // Set datas
 
 
@@ -56,71 +64,58 @@ const AddPropertyModal = () => {
     }
 
 
-    //
     // SUbmit
 
 
-   const submitForm = async (e: React.FormEvent) => {
-    e.preventDefault();
-    console.log('submitForm');
-    setErrors([]);
+    const submitForm = async () => {
+        console.log('submitForm');
 
-    // Trim and validate required fields
-    const trimmedTitle = dataTitle?.trim();
-    const trimmedDescription = dataDescription?.trim();
 
-    if (!trimmedTitle || !trimmedDescription || !dataPrice || !dataCategory || !dataCountry || !dataImage) {
-        setErrors(['Please fill in all required fields']);
-        return;
-    }
+        if (
+            dataCategory &&
+            dataTitle &&
+            dataDescription &&
+            dataPrice &&
+            dataCountry &&
+            dataImage
+        ) {
+            const formData = new FormData();
+            formData.append('category', dataCategory);
+            formData.append('title', dataTitle);
+            formData.append('description', dataDescription);
+            formData.append('price_per_night', dataPrice);
+            formData.append('bedrooms', dataBedrooms);
+            formData.append('bathrooms', dataBathrooms);
+            formData.append('guests', dataGuests);
+            formData.append('country', dataCountry.label);
+            formData.append('country_code', dataCountry.value);
+            formData.append('image', dataImage);
 
-    try {
-        // Create a new FormData instance
-        const formData = new FormData();
-        
-        // Append all fields with proper validation
-        formData.append('title', trimmedTitle);
-        formData.append('description', trimmedDescription);
-        formData.append('price_per_night', dataPrice.toString());
-        formData.append('category', dataCategory);
-        formData.append('bedrooms', dataBedrooms || '0');
-        formData.append('bathrooms', dataBathrooms || '0');
-        formData.append('guests', dataGuests || '1');
-        formData.append('country', dataCountry.label);
-        formData.append('country_code', dataCountry.value);
-        formData.append('image', dataImage);
 
-        // Debug: Log the form data being sent
-        console.log('FormData entries:');
-        for (let [key, value] of formData.entries()) {
-            console.log(key, value);
-        }
+            const response = await apiService.post('/api/properties/create/', formData);
 
-        // Make the API call with the proper content type
-        const response = await fetch('http://localhost:8000/api/properties/create/', {
-            method: 'POST',
-            body: formData,
-            // Don't set Content-Type header - let the browser set it with the correct boundary
-            headers: {
-                'Authorization': `Bearer ${await getAccessToken()}` // Make sure to import getAccessToken
+
+            if (response.success) {
+                console.log('SUCCESS :-D');
+
+
+                router.push('/?added=true');
+
+
+                addPropertyModal.close();
+            } else {
+                console.log('Error');
+
+
+                const tmpErrors: string[] = Object.values(response).map((error: any) => {
+                    return error;
+                })
+
+
+                setErrors(tmpErrors)
             }
-        });
-
-        const responseData = await response.json();
-        
-        if (response.ok) {
-            console.log('Property created successfully');
-            router.push('/?added=true');
-            addPropertyModal.close();
-        } else {
-            console.error('Error response:', responseData);
-            handleApiError({ errors: responseData });
         }
-    } catch (error) {
-        console.error('Error in submitForm:', error);
-        setErrors(['An error occurred while submitting the form. Please try again.']);
     }
-}
 
 
     //
@@ -311,6 +306,8 @@ const AddPropertyModal = () => {
                             </div>
                         )
                     })}
+
+
                     <CustomButton
                         label='Previous'
                         className='mb-2 bg-black hover:bg-gray-800'
@@ -326,6 +323,8 @@ const AddPropertyModal = () => {
             )}
         </>
     )
+
+
     return (
         <>
             <Modal

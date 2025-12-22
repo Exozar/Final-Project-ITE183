@@ -17,7 +17,9 @@ async function getToken(): Promise<string | undefined> {
         return await getAccessToken();
     }
 
-    return getCookieValue('session_access_token') || undefined;
+    const token = getCookieValue('session_access_token') || undefined;
+    console.log('Token from cookie:', token);
+    return token;
 }
 
 const apiService = {
