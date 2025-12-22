@@ -1,6 +1,5 @@
 import Image from "next/image";
 import PropertyLists from "@/app/Components/properties/PropertyLists";
-import ContactBtn from "@/app/Components/ContactButton";
 import apiService from "@/app/services/apiService";
 import { getUserId } from "@/app/lib/action";
 import ContactButton from "@/app/Components/ContactButton";
@@ -28,6 +27,7 @@ const LandlordDetailPage = async (props: { params: { id: string } }) => {
                             <ContactButton
                             // userId={userId}
                             // landlordId={params.id}
+                                landlordId={params.id}
                             />
                         )}
                     </div>

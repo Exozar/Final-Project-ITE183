@@ -5,7 +5,10 @@ import { useRouter } from "next/navigation";
 import useLoginModal from "@/app/hooks/useLoginModal";
 import CustomButton from "../forms/CustomButton";
 import apiService from "@/app/services/apiService";
-import { handleLogin } from "@/app/lib/action";
+
+function setCookie(name: string, value: string, maxAgeSeconds: number) {
+    document.cookie = `${name}=${encodeURIComponent(value)}; path=/; max-age=${maxAgeSeconds}`;
+}
 
 const UserNav = () => {
     const router = useRouter()
@@ -14,19 +17,28 @@ const UserNav = () => {
     const [password, setPassword] = useState('');
     const [errors, setErrors] = useState<string[]>([]);
 
-    const submitLogin = async () => {
+    const submitLogin = async (e?: React.FormEvent) => {
+        e?.preventDefault();
+        setErrors([]);
+
         const formData = {
             email: email,
             password: password
         }
-        const response = await apiService.postWithoutToken('/api/auth/login/', JSON.stringify(formData))
+
+        const response = await apiService.postWithoutToken('/api/auth/login/', formData)
 
         if (response.access) {
-            handleLogin(response.user.pk, response.access, response.refresh);
+            setCookie('session_userid', response.user.pk, 60 * 60 * 24 * 7);
+            setCookie('session_access_token', response.access, 60 * 60);
+            if (response.refresh) {
+                setCookie('session_refresh_token', response.refresh, 60 * 60 * 24 * 7);
+            }
 
             loginModal.close();
 
             router.push('/')
+            router.refresh();
         } else {
             setErrors(response.non_field_errors);
         }
@@ -35,7 +47,7 @@ const UserNav = () => {
     const content = (
         <>
             <form
-                action={submitLogin}
+                onSubmit={submitLogin}
                 className="space-y-4"
             >
                 <input onChange={(e) => setEmail(e.target.value)} placeholder="Your e-mail address" type="email" className="w-full h-[54px] px-4 border border-gray-300 rounded-xl" />

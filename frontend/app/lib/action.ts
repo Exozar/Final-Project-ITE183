@@ -1,5 +1,8 @@
 'use server';
 import { cookies } from 'next/headers';
+import { redirect } from 'next/navigation';
+
+const API_BASE_URL = "http://localhost:8000";
 
 export async function handleLogin(userId: string, accessToken: string, refreshToken: string) {
     const cookieStore = await cookies();
@@ -14,7 +17,7 @@ export async function handleLogin(userId: string, accessToken: string, refreshTo
 
 
     cookieStore.set('session_access_token', accessToken, {
-        httpOnly: true,
+        httpOnly: false,
         secure: process.env.NODE_ENV === 'production',
         maxAge: 60 * 60, // 60 minutes
         path: '/'
@@ -55,6 +58,36 @@ export async function getAccessToken() {
 
 
     return accessToken;
+}
+
+
+export async function startConversation(userId: string) {
+    const token = await getAccessToken();
+
+    if (!token) {
+        throw new Error('No access token');
+    }
+
+    const response = await fetch(`${API_BASE_URL}/api/chat/start/`, {
+        method: 'POST',
+        headers: {
+            'Accept': 'application/json',
+            'Content-Type': 'application/json',
+            'Authorization': `Bearer ${token}`
+        },
+        body: JSON.stringify({ user_id: userId })
+    });
+
+    const contentType = response.headers.get('content-type');
+
+    if (contentType && contentType.includes('application/json')) {
+        const json = await response.json();
+        if (!response.ok) throw json;
+        redirect(`/inbox/${json.id}`);
+    }
+
+    const text = await response.text();
+    throw new Error(text);
 }
 
 
