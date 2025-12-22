@@ -1,6 +1,6 @@
 import { getUserId } from "../lib/action";
 import apiService from "../services/apiService";
-import React from "react";
+import React from 'react';
 import Conversation from "../Components/inbox/Conversation";
 
 
@@ -31,6 +31,8 @@ const InboxPage = async () => {
 
 
     const conversations = await apiService.get('/api/chat/')
+
+
     return (
         <main className="max-w-[1500px] mx-auto px-6 pb-6 space-y-4">
             <h1 className="my-6 text-2xl">Inbox</h1>

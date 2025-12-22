@@ -1,6 +1,6 @@
 import Image from "next/image";
 import Link from "next/link";
-import ReservationSidebar from "@/app/Components/properties/ReservationSideBar";
+import ReservationSideBar from "@/app/Components/properties/ReservationSideBar";
 
 
 import apiService from "@/app/services/apiService";
@@ -21,14 +21,14 @@ const PropertyDetailPage = async (props: { params: { id: string } }) => {
     return (
         <main className="max-w-[1500px] mx-auto px-6 pb-6">
             <div className="w-full h-[64vh] mb-4 overflow-hidden rounded-xl relative">
-                 <Image
-                src={property.image_url}
-                fill
-                unoptimized
-                className="hover:scale-110 object-cover transition"
-                alt={property.title}
-                 />
+                <Image
+                    fill
+                    src={property.image_url}
+                    className="object-cover w-full h-full"
+                    alt="Beach house"
+                />
             </div>
+
 
             <div className="grid grid-cols-1 md:grid-cols-5 gap-4">
                 <div className="py-6 pr-6 col-span-3">
@@ -43,23 +43,25 @@ const PropertyDetailPage = async (props: { params: { id: string } }) => {
                     <hr />
 
 
-                    <Link
-                        href={`/landlords/${property.landlord.id}`}
-                        className="py-6 flex items-center space-x-4"
-                    >
-                        {property.landlord.avatar_url && (
-                            <Image
-                                src={property.landlord.avatar_url}
-                                width={50}
-                                height={50}
-                                className="rounded-full"
-                                alt="The user name"
-                            />
-                        )}
+                    {property.landlord && property.landlord.id && (
+                        <Link
+                            href={`/landlords/${property.landlord.id}`}
+                            className="py-6 flex items-center space-x-4"
+                        >
+                            {property.landlord.avatar_url && (
+                                <Image
+                                    src={property.landlord.avatar_url}
+                                    width={50}
+                                    height={50}
+                                    className="rounded-full"
+                                    alt="The user name"
+                                />
+                            )}
 
 
-                        <p><strong>{property.landlord.name}</strong> is your host</p>
-                    </Link>
+                            <p><strong>{property.landlord.name}</strong> is your host</p>
+                        </Link>
+                    )}
 
 
                     <hr />
@@ -71,7 +73,7 @@ const PropertyDetailPage = async (props: { params: { id: string } }) => {
                 </div>
 
 
-                <ReservationSidebar
+                <ReservationSideBar
                     property={property}
                     userId={userId}
                 />

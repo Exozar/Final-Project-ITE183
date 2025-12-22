@@ -16,7 +16,8 @@ export type MessageType = {
 }
 
 
-const ConversationPage = async ({ params }: { params: { id: string } }) => {
+const ConversationPage = async ({ params }: { params: Promise<{ id: string }> }) => {
+    const paramsData = await params;
     const userId = await getUserId();
     const token = await getAccessToken();
 
@@ -30,8 +31,7 @@ const ConversationPage = async ({ params }: { params: { id: string } }) => {
     }
 
 
-    const { id } = await params;
-    const conversation = await apiService.get(`/api/chat/${id}/`)
+    const conversation = await apiService.get(`/api/chat/${paramsData.id}/`)
 
 
     return (
